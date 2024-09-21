@@ -11,12 +11,10 @@ const createNewConversation = async (req, res) => {
     });
     await conversation.save();
 
-    res
-      .status(201)
-      .json({
-        data: conversation,
-        message: "Conversation created successfully",
-      });
+    res.status(201).json({
+      data: conversation,
+      message: "Conversation created successfully",
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Something went wrong." });
@@ -40,9 +38,10 @@ const getAllConversation = async (req, res) => {
         total,
       },
       data: response,
+      status:200
     });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.status(500).send(error);
   }
 };
@@ -52,10 +51,14 @@ const getOneConversation = async (req, res) => {
 
   try {
     const response = await Conversation.findById(id);
-
-    res.status(200).send(response);
+    if (!response)
+      return res.status(404).send("This Conversation is not found");
+    res.status(200).json({
+      status:200,
+      data: response,
+    });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.send(error);
   }
 };
@@ -72,7 +75,7 @@ const updateConversation = async (req, res) => {
 
     res.status(200).send(response);
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.status(500).send(error);
   }
 };
@@ -84,7 +87,7 @@ const deleteOneConversation = async (req, res) => {
 
     res.status(200).send("Conversation Deleted Successfully");
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.status(500).send(error);
   }
 };

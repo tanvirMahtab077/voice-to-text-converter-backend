@@ -3,10 +3,9 @@ const jwt = require("jsonwebtoken");
 
 const handleLogin = async (req, res, next) => {
   const { email, password } = req.body;
-
+try{
   const foundEmployee = await Employee.findOne({ email }).exec();
   
-
   if (!foundEmployee) {
     return res
       .status(401) //Unauthorized
@@ -14,7 +13,9 @@ const handleLogin = async (req, res, next) => {
   }
 
   const isMatch = await foundEmployee.isValidPassword(password);
-
+  if (!isMatch) {
+    return res.status(400).json({ message: "Password does not match" });
+  }
   if (isMatch) {
     const role = foundEmployee.role;
     // create JWTs
@@ -25,13 +26,17 @@ const handleLogin = async (req, res, next) => {
         role,
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "3600s" }
+      { expiresIn: "2m" }
     );
 
     const refreshToken = jwt.sign(
-      { email: foundEmployee?.email },
+      {
+        name: foundEmployee.name,
+        email: foundEmployee?.email,
+        role,
+      },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "7d" }
     );
 
     // foundEmployee.refreshToken = refreshToken;
@@ -40,8 +45,8 @@ const handleLogin = async (req, res, next) => {
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
       sameSite: "None",
-      secure: true,
-      maxAge: 24 * 60 * 60 * 1000, // one day max age of the cookie
+      // secure: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.json({
@@ -56,6 +61,14 @@ const handleLogin = async (req, res, next) => {
   } else {
     res.status(401).json({ message: "Password incorrect" });
   }
+}catch(error){
+  console.error(err);
+    res.status(401).json({
+      message: "User not created successful",
+      error: err.message,
+    });
+}
+ 
 };
 
 module.exports = { handleLogin };

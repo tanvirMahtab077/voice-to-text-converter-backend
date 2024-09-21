@@ -5,7 +5,7 @@ const verifyJWT = (req, res, next) => {
   
 
   if (!authHeader?.startsWith("Bearer ")) {
-    return res.sendStatus(401);
+    return res.status(401).send('Unauthorized');
   }
 
   const token = authHeader.split(" ")[1];
@@ -13,7 +13,7 @@ const verifyJWT = (req, res, next) => {
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
       console.log(err)
-      return res.sendStatus(403); //invalid token - forbidden from access
+      return res.status(403).send('Invilid token'); //invalid token - forbidden from access
     }
     req.name = decoded.name;
     req.role = decoded.role;

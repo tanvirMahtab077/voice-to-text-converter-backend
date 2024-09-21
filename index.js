@@ -9,13 +9,8 @@ const corsOptions = require("./config/corsOptions");
 const errorHandler = require("./middleware/errorHandler");
 const cookieParser = require("cookie-parser");
 const credentials = require("./middleware/credentials");
-const registerRoute = require("./routes/register");
-const authRoute = require("./routes/authorisation");
-const refreshTokenRoute = require("./routes/refreshToken");
-const logoutRoute = require("./routes/logout");
-const employeeRoute = require("./routes/employees");
-const conversationRoute = require("./routes/conversation");
 const rootRoute = require("./routes/root");
+const indexRoute = require("./routes/index");
 
 // check express version
 const fs = require("fs");
@@ -41,12 +36,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // routes
-app.use("/api/register", registerRoute);
-app.use("/api/login", authRoute);
-app.use("/api/refresh", refreshTokenRoute);
-app.use("/api/logout", logoutRoute);
-app.use("/api/employees", employeeRoute);
-app.use("/api/conversations", conversationRoute);
+app.use("/api", indexRoute);
 
 const PORT = process.env.PORT || 5000;
 

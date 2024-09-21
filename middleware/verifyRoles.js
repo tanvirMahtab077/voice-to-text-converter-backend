@@ -8,7 +8,7 @@ const verifyRoles = (...allowedRoles) => {
       // console.log(req.body?.roles);
       const result = roleArray.includes(req.role)
       if (!result) {
-        return res.sendStatus(401);
+        return res.status(401).send('Unauthorized User');
       }
   
       next();
